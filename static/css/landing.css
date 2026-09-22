@@ -1,0 +1,232 @@
+/* ------------------------------------------------------------------ */
+/* Hero Section (Centered Stacked Layout)                             */
+/* ------------------------------------------------------------------ */
+
+.hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 4.5rem 1.5rem 5rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.hero-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    background: #e6f4ea;
+    color: #1b7a53;
+    font-size: 0.825rem;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: normal;
+    padding: 0.35rem 0.95rem;
+    border-radius: 999px;
+    margin-bottom: 2rem;
+}
+
+.badge-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: #1b7a53;
+    border-radius: 50%;
+}
+
+.hero-title {
+    font-family: var(--font-body);
+    font-size: clamp(2.4rem, 5vw, 3.8rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    margin-bottom: 1.25rem;
+}
+
+.hero-title .highlight {
+    color: #1a7a4c;
+    font-style: normal;
+}
+
+.hero-subtitle {
+    font-size: 1.05rem;
+    color: var(--ink-muted);
+    line-height: 1.65;
+    max-width: 580px;
+    margin: 0 auto 2.25rem;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 3.5rem;
+}
+
+.hero-actions .btn-hero {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #111111;
+    color: #ffffff;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: background 0.2s, transform 0.1s;
+    text-decoration: none;
+}
+
+.hero-actions .btn-hero:hover {
+    background: #2a2a2a;
+    color: #ffffff;
+}
+
+/* ------------------------------------------------------------------ */
+/* Hero Visual / Mockup                                               */
+/* ------------------------------------------------------------------ */
+
+.hero-visual {
+    display: flex !important;
+    justify-content: center;
+    width: 100%;
+}
+
+.app-mockup {
+    background: #f7f7f8;
+    border: 1px solid #ebebeb;
+    border-radius: 20px;
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 720px;
+}
+
+.window-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 1.25rem;
+}
+
+.control-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.dot-red { background: #f87171; }
+.dot-yellow { background: #fbbf24; }
+.dot-green { background: #34d399; }
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.stat-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1.25rem;
+    text-align: left;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: #6b7280;
+    font-weight: 400;
+    margin-bottom: 0.4rem;
+}
+
+.stat-value {
+    font-family: var(--font-body);
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: 0.35rem;
+}
+
+.stat-sub {
+    font-size: 0.825rem;
+    font-weight: 500;
+}
+
+.stat-red { color: #dc2626; }
+.stat-green { color: #16a34a; }
+.stat-muted { color: #9ca3af; }
+
+.bars-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.bar-row {
+    display: grid;
+    grid-template-columns: 50px 1fr;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.bar-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    text-align: left;
+}
+
+.bar-track {
+    height: 9px;
+    background: #f3f4f6;
+    border-radius: 999px;
+    overflow: hidden;
+    width: 100%;
+}
+
+.bar-fill {
+    height: 100%;
+    border-radius: 999px;
+}
+
+.fill-food { background: #e68a1d; }
+.fill-travel { background: #2563eb; }
+.fill-bills { background: #7c3aed; }
+
+/* Responsive adjustments */
+@media (max-width: 680px) {
+    .hero {
+        padding: 3rem 1rem 3rem;
+    }
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    .hero-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    .hero-actions .btn-hero {
+        width: 100%;
+    }
+    .app-mockup {
+        padding: 1rem;
+    }
+}
