@@ -22,7 +22,14 @@ def get_db(db_path=None):
     Opens a SQLite connection with row_factory configured as sqlite3.Row
     and foreign keys enabled via PRAGMA foreign_keys = ON.
     """
-    target_path = db_path if db_path is not None else DB_PATH
+    if db_path is not None:
+        target_path = db_path
+    else:
+        try:
+            from flask import current_app
+            target_path = current_app.config.get("DATABASE", DB_PATH)
+        except Exception:
+            target_path = DB_PATH
     conn = sqlite3.connect(target_path)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON;")
@@ -120,3 +127,41 @@ def seed_db(db_path=None):
 
     conn.commit()
     conn.close()
+
+
+def get_user_by_email(email, db_path=None):
+    """
+    Fetches a user record by email (case-insensitive).
+    Returns sqlite3.Row if found, otherwise None.
+    """
+    normalized_email = email.strip().lower() if email else ""
+    conn = get_db(db_path)
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM users WHERE LOWER(email) = ?;", (normalized_email,))
+        return cursor.fetchone()
+    finally:
+        conn.close()
+
+
+def create_user(name, email, password_hash, db_path=None):
+    """
+    Inserts a new user record into the users table using parameterized SQL.
+    Returns the newly created user's integer id.
+    """
+    normalized_name = name.strip() if name else ""
+    normalized_email = email.strip().lower() if email else ""
+    conn = get_db(db_path)
+    try:
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            INSERT INTO users (name, email, password_hash)
+            VALUES (?, ?, ?);
+            """,
+            (normalized_name, normalized_email, password_hash),
+        )
+        conn.commit()
+        return cursor.lastrowid
+    finally:
+        conn.close()
