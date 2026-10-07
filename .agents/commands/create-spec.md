@@ -55,12 +55,12 @@ git checkout -b <branch_name>
 
 ## Step 6 — Research the codebase
 Read these files before writing the spec:
-- `CLAUDE.md` — roadmap, conventions, schema
+- `AGENTS.md` — roadmap, conventions, schema
 - `app.py` — existing routes and structure
 - `database/db.py` — existing schema and functions
-- All files in `.claude/specs/` — avoid duplicating existing specs
+- All files in `.agents/specs/` — avoid duplicating existing specs
 
-Check `CLAUDE.md` to confirm the requested step is not already
+Check `AGENTS.md` to confirm the requested step is not already
 marked complete. If it is, warn the user and stop.
 
 ## Step 7 — Write the spec
@@ -114,18 +114,18 @@ something that can be verified by running the app.
 ---
 
 ## Step 8 — Save the spec
-Save to: `.claude/specs/<step_number>-<feature_slug>.md`
+Save to: `.agents/specs/<step_number>-<feature_slug>.md`
 
 ## Step 9 — Report to the user
 Print a short summary in this exact format:
 ```
 Branch:    <branch_name>
-Spec file: .claude/specs/<step_number>-<feature_slug>.md
+Spec file: .agents/specs/<step_number>-<feature_slug>.md
 Title:     <feature_title>
 ```
 
 Then tell the user:
-"Review the spec at `.claude/specs/<step_number>-<feature_slug>.md`
+"Review the spec at `.agents/specs/<step_number>-<feature_slug>.md`
 then enter Plan Mode with Shift+Tab twice to begin implementation."
 
 Do not print the full spec in chat unless explicitly asked.
