@@ -1,8 +1,8 @@
 import os
 import re
-from flask import Flask, render_template, request, redirect, url_for, flash
-from werkzeug.security import generate_password_hash
-from database.db import init_db, seed_db, get_user_by_email, create_user
+from flask import Flask, render_template, request, redirect, url_for, flash, session
+from werkzeug.security import generate_password_hash, check_password_hash
+from database.db import init_db, seed_db, get_user_by_email, create_user, get_user_by_id
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-key-spendly")
@@ -33,6 +33,9 @@ def privacy():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    if session.get("user_id"):
+        return redirect(url_for("landing"))
+
     if request.method == "POST":
         name = request.form.get("name", "").strip()
         email = request.form.get("email", "").strip().lower()
@@ -79,18 +82,49 @@ def register():
     return render_template("register.html")
 
 
-@app.route("/login")
+@app.route("/login", methods=["GET", "POST"])
 def login():
+    if session.get("user_id"):
+        return redirect(url_for("landing"))
+
+    if request.method == "POST":
+        email = request.form.get("email", "").strip().lower()
+        password = request.form.get("password", "")
+
+        if not email or not password.strip():
+            return render_template(
+                "login.html",
+                error="All fields are required.",
+                email=email,
+            )
+
+        user = get_user_by_email(email)
+        if not user or not check_password_hash(user["password_hash"], password):
+            return render_template(
+                "login.html",
+                error="Invalid email or password.",
+                email=email,
+            )
+
+        session.clear()
+        session["user_id"] = user["id"]
+        session["user_name"] = user["name"]
+        flash(f"Welcome back, {user['name']}!", "success")
+        return redirect(url_for("landing"))
+
     return render_template("login.html")
+
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    flash("You have been signed out.", "success")
+    return redirect(url_for("login"))
 
 
 # ------------------------------------------------------------------ #
 # Placeholder routes — students will implement these                  #
 # ------------------------------------------------------------------ #
-
-@app.route("/logout")
-def logout():
-    return "Logout — coming in Step 3"
 
 
 @app.route("/profile")

@@ -165,3 +165,18 @@ def create_user(name, email, password_hash, db_path=None):
         return cursor.lastrowid
     finally:
         conn.close()
+
+
+def get_user_by_id(user_id, db_path=None):
+    """
+    Fetches a user record by primary key id.
+    Returns sqlite3.Row if found, otherwise None.
+    """
+    conn = get_db(db_path)
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM users WHERE id = ?;", (user_id,))
+        return cursor.fetchone()
+    finally:
+        conn.close()
+

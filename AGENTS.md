@@ -69,7 +69,6 @@ spendly/
 python -m venv venv
 source venv/bin/activate          # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-
 # Run dev server (port 5001)
 python app.py
 
@@ -95,7 +94,8 @@ pytest -s
 | `GET /` | Implemented — renders `landing.html` |
 | `GET /register` | Implemented — renders `register.html` |
 | `GET /login` | Implemented — renders `login.html` |
-| `GET /logout` | Stub — Step 3 |
+| `POST /login` | Implemented — authenticates and sets session |
+| `GET /logout` | Implemented — clears session and redirects |
 | `GET /profile` | Stub — Step 4 |
 | `GET /expenses/add` | Stub — Step 7 |
 | `GET /expenses/<id>/edit` | Stub — Step 8 |
