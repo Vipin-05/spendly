@@ -180,3 +180,54 @@ def get_user_by_id(user_id, db_path=None):
     finally:
         conn.close()
 
+
+def update_user_name(user_id, new_name, db_path=None):
+    """
+    Updates the user's display name in the users table using parameterized SQL.
+    Returns True if update succeeded, False otherwise.
+    """
+    normalized_name = new_name.strip() if new_name else ""
+    if not normalized_name:
+        return False
+    conn = get_db(db_path)
+    try:
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            UPDATE users
+            SET name = ?
+            WHERE id = ?;
+            """,
+            (normalized_name, user_id),
+        )
+        conn.commit()
+        return cursor.rowcount > 0
+    finally:
+        conn.close()
+
+
+def get_user_expense_stats(user_id, db_path=None):
+    """
+    Returns summary statistics for the user's expenses:
+    count: total number of expenses
+    total_spent: sum of amounts (float)
+    """
+    conn = get_db(db_path)
+    try:
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            SELECT COUNT(*) AS count, COALESCE(SUM(amount), 0.0) AS total_spent
+            FROM expenses
+            WHERE user_id = ?;
+            """,
+            (user_id,),
+        )
+        row = cursor.fetchone()
+        return {
+            "count": row["count"] if row else 0,
+            "total_spent": float(row["total_spent"]) if row else 0.0,
+        }
+    finally:
+        conn.close()
+

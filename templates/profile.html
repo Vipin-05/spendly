@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile — Spendly{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <!-- Header Card -->
+    <div class="profile-header-card">
+        <div class="profile-avatar-wrapper">
+            <div class="profile-avatar">
+                {{ user.name[:2]|upper }}
+            </div>
+            <div class="profile-header-details">
+                <div class="profile-title-row">
+                    <h1 class="profile-name">{{ user.name }}</h1>
+                    <span class="profile-badge">
+                        <i data-lucide="shield-check"></i>
+                        Active Member
+                    </span>
+                </div>
+                <p class="profile-email-sub">{{ user.email }}</p>
+            </div>
+        </div>
+        <div class="profile-header-actions">
+            <a href="{{ url_for('logout') }}" class="btn btn-outline">
+                <i data-lucide="log-out"></i>
+                Sign out
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="profile-stats-grid">
+        <div class="profile-stat-card">
+            <div class="stat-icon-wrapper">
+                <i data-lucide="receipt"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Total Expenses</span>
+                <span class="stat-value tabular">{{ stats.count }}</span>
+            </div>
+        </div>
+
+        <div class="profile-stat-card">
+            <div class="stat-icon-wrapper">
+                <i data-lucide="wallet"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Total Spending</span>
+                <span class="stat-value tabular">₹{{ "{:,.2f}".format(stats.total_spent) }}</span>
+            </div>
+        </div>
+
+        <div class="profile-stat-card">
+            <div class="stat-icon-wrapper">
+                <i data-lucide="calendar"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Member Since</span>
+                <span class="stat-value">{{ user.created_at[:10] if user.created_at else 'Recent' }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Card -->
+    <div class="profile-card">
+        <div class="profile-card-header">
+            <div>
+                <h2 class="profile-card-title">Personal Information</h2>
+                <p class="profile-card-subtitle">Manage your account details and display name</p>
+            </div>
+        </div>
+
+        {% if error %}
+        <div class="auth-error" style="margin-bottom: 1.5rem;">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('profile') }}" class="profile-form">
+            <div class="form-group">
+                <label for="name" class="form-label">Full Name</label>
+                <input 
+                    type="text" 
+                    id="name" 
+                    name="name" 
+                    class="form-input" 
+                    value="{{ user.name }}" 
+                    required 
+                    autocomplete="name"
+                >
+                <span class="form-helper">This name will be displayed in your navigation and dashboard.</span>
+            </div>
+
+            <div class="form-group">
+                <label for="email" class="form-label">Email Address</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    class="form-input" 
+                    value="{{ user.email }}" 
+                    disabled 
+                    readonly
+                >
+                <span class="form-helper">Email address is permanently associated with your account login.</span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Account Created</label>
+                <input 
+                    type="text" 
+                    class="form-input" 
+                    value="{{ user.created_at }}" 
+                    disabled 
+                    readonly
+                >
+            </div>
+
+            <div class="profile-form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i data-lucide="check"></i>
+                    Save changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+</script>
+{% endblock %}
