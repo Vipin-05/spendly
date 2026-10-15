@@ -76,7 +76,7 @@ def test_login_wrong_password(test_env):
 
 
 def test_login_success(test_env):
-    """POST /login with valid credentials sets session and redirects to landing page."""
+    """POST /login with valid credentials sets session and redirects to profile page without welcome flash."""
     client, _ = test_env
     res = client.post(
         "/login",
@@ -84,18 +84,20 @@ def test_login_success(test_env):
         follow_redirects=False,
     )
     assert res.status_code == 302
-    assert res.headers["Location"] == "/"
+    assert res.headers["Location"] == "/profile"
 
     # Check session variables
     with client.session_transaction() as sess:
         assert sess.get("user_id") is not None
         assert sess.get("user_name") == "Demo User"
 
-    # Follow redirect and verify welcome toast/flash
+    # Follow redirect and verify profile page renders without welcome toast
     follow_res = client.get(res.headers["Location"])
     assert follow_res.status_code == 200
     html = follow_res.get_data(as_text=True)
-    assert "Welcome back, Demo User!" in html
+    assert "Welcome back, Demo User!" not in html
+    assert "Personal Information" in html
+    assert "Category Spending" in html
 
 
 def test_login_case_insensitive_email(test_env):

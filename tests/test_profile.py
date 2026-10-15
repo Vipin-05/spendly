@@ -5,8 +5,10 @@ from database.db import (
     init_db,
     seed_db,
     get_user_by_id,
+    create_user,
     update_user_name,
     get_user_expense_stats,
+    get_user_category_expenses,
 )
 
 
@@ -61,6 +63,13 @@ def test_profile_authenticated_page_renders(test_env):
     assert stats["count"] == 8
     assert f"{stats['count']}" in html
     assert "₹296.74" in html
+
+    # Verify category spending breakdown table and horizontal bars
+    assert "Category Spending" in html
+    assert "Spending Distribution" in html
+    assert "Food" in html
+    assert "Bills" in html
+    assert "category-bar-fill" in html
 
 
 def test_profile_update_name_success(test_env):
@@ -168,3 +177,51 @@ def test_db_get_user_expense_stats_helper(test_env):
     empty_stats = get_user_expense_stats(9999, db_file)
     assert empty_stats["count"] == 0
     assert empty_stats["total_spent"] == 0.0
+
+
+def test_db_get_user_category_expenses_helper(test_env):
+    """Unit test for get_user_category_expenses helper in database/db.py."""
+    _, db_file = test_env
+
+    # Seeded user (user_id = 1) has 8 expenses across 7 categories
+    cat_expenses = get_user_category_expenses(1, db_file)
+    assert len(cat_expenses) == 7
+
+    # Verify ordered descending by total_amount
+    amounts = [c["total_amount"] for c in cat_expenses]
+    assert amounts == sorted(amounts, reverse=True)
+
+    # Bills was 85.00 (highest single item)
+    assert cat_expenses[0]["category"] == "Bills"
+    assert cat_expenses[0]["total_amount"] == 85.0
+    assert cat_expenses[0]["count"] == 1
+
+    # Verify percentages sum approximately to 100%
+    total_pct = sum(c["percentage"] for c in cat_expenses)
+    assert 99.0 <= total_pct <= 101.0
+
+    # Non-existent user returns empty list
+    empty_list = get_user_category_expenses(9999, db_file)
+    assert empty_list == []
+
+
+def test_profile_category_expenses_empty_state(test_env):
+    """Profile page for a user with 0 expenses displays clean empty state message."""
+    client, db_file = test_env
+
+    # Create a fresh user with no expenses
+    new_user_id = create_user("Zero Expenses User", "zero@example.com", "dummyhash", db_file)
+
+    # Establish session
+    with client.session_transaction() as sess:
+        sess["user_id"] = new_user_id
+        sess["user_name"] = "Zero Expenses User"
+
+    res = client.get("/profile")
+    assert res.status_code == 200
+    html = res.get_data(as_text=True)
+
+    # Verify empty state rendered
+    assert "No expenses recorded yet" in html
+    assert "Your category breakdown will appear here once you log your first expenses." in html
+    assert "Spending Distribution" not in html

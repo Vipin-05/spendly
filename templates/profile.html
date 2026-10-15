@@ -66,6 +66,58 @@
         </div>
     </div>
 
+    <!-- Category Spending Breakdown -->
+    <div class="profile-card">
+        <div class="profile-card-header">
+            <div>
+                <h2 class="profile-card-title">Category Spending</h2>
+                <p class="profile-card-subtitle">Breakdown of your spending across categories</p>
+            </div>
+        </div>
+
+        {% if category_expenses %}
+        <div class="profile-table-wrapper">
+            <table class="profile-table">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th class="text-center">Expenses</th>
+                        <th class="text-right">Total Amount</th>
+                        <th>Spending Distribution</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in category_expenses %}
+                    <tr>
+                        <td class="category-name-cell">
+                            <span class="category-pill">{{ item.category }}</span>
+                        </td>
+                        <td class="text-center tabular">{{ item.count }}</td>
+                        <td class="text-right tabular font-medium">₹{{ "{:,.2f}".format(item.total_amount) }}</td>
+                        <td class="category-bar-cell">
+                            <div class="category-bar-wrapper">
+                                <div class="category-bar-track">
+                                    <div class="category-bar-fill" style="width: {{ item.percentage }}%;"></div>
+                                </div>
+                                <span class="category-percentage tabular">{{ item.percentage }}%</span>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="profile-empty-state">
+            <div class="empty-icon-wrap">
+                <i data-lucide="pie-chart"></i>
+            </div>
+            <p class="empty-title">No expenses recorded yet</p>
+            <p class="empty-desc">Your category breakdown will appear here once you log your first expenses.</p>
+        </div>
+        {% endif %}
+    </div>
+
     <!-- Edit Profile Card -->
     <div class="profile-card">
         <div class="profile-card-header">
