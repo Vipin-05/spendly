@@ -10,6 +10,7 @@ from database.db import (
     get_user_by_id,
     update_user_name,
     get_user_expense_stats,
+    get_user_category_expenses,
 )
 
 app = Flask(__name__)
@@ -117,8 +118,7 @@ def login():
         session.clear()
         session["user_id"] = user["id"]
         session["user_name"] = user["name"]
-        flash(f"Welcome back, {user['name']}!", "success")
-        return redirect(url_for("landing"))
+        return redirect(url_for("profile"))
 
     return render_template("login.html")
 
@@ -149,6 +149,7 @@ def profile():
         return redirect(url_for("login"))
 
     stats = get_user_expense_stats(user_id)
+    category_expenses = get_user_category_expenses(user_id)
 
     if request.method == "POST":
         name = request.form.get("name", "").strip()
@@ -157,6 +158,7 @@ def profile():
                 "profile.html",
                 user=user,
                 stats=stats,
+                category_expenses=category_expenses,
                 error="Full name cannot be empty.",
             )
 
@@ -165,7 +167,12 @@ def profile():
         flash("Profile updated successfully!", "success")
         return redirect(url_for("profile"))
 
-    return render_template("profile.html", user=user, stats=stats)
+    return render_template(
+        "profile.html",
+        user=user,
+        stats=stats,
+        category_expenses=category_expenses,
+    )
 
 
 @app.route("/expenses/add")

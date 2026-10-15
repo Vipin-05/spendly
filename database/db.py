@@ -231,3 +231,44 @@ def get_user_expense_stats(user_id, db_path=None):
     finally:
         conn.close()
 
+
+def get_user_category_expenses(user_id, db_path=None):
+    """
+    Returns category-wise spending breakdown for a user, ordered by total spent descending.
+    Each item contains:
+      - category: str
+      - count: int
+      - total_amount: float (rounded to 2 decimal places)
+      - percentage: float (relative share of user's overall spending 0.0 - 100.0)
+    """
+    conn = get_db(db_path)
+    try:
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            SELECT category, COUNT(*) AS count, COALESCE(SUM(amount), 0.0) AS total_amount
+            FROM expenses
+            WHERE user_id = ?
+            GROUP BY category
+            ORDER BY total_amount DESC;
+            """,
+            (user_id,),
+        )
+        rows = cursor.fetchall()
+
+        overall_total = sum(float(r["total_amount"]) for r in rows)
+
+        results = []
+        for r in rows:
+            amount = round(float(r["total_amount"]), 2)
+            pct = round((amount / overall_total * 100.0), 1) if overall_total > 0 else 0.0
+            results.append({
+                "category": r["category"],
+                "count": r["count"],
+                "total_amount": amount,
+                "percentage": pct,
+            })
+        return results
+    finally:
+        conn.close()
+
